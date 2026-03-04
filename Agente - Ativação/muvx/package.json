@@ -1,0 +1,17 @@
+{
+  "name": "muvx-orquestrador",
+  "version": "1.0.0",
+  "description": "Orquestrador do pipeline de ativação MUVX",
+  "main": "orquestrador.js",
+  "scripts": {
+    "start": "node orquestrador.js",
+    "dev": "node orquestrador.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "axios": "^1.6.0",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1"
+  }
+}

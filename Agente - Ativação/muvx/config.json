@@ -1,0 +1,31 @@
+{
+  "hubspot": {
+    "accessToken": "SEU_HUBSPOT_ACCESS_TOKEN",
+    "pipelineId": "ID_DO_PIPELINE_MUVX_ATIVACAO",
+    "stageIds": {
+      "cadastro": "STAGE_ID",
+      "ativacao_conta": "STAGE_ID",
+      "produto_publicado": "STAGE_ID",
+      "convite_alunos": "STAGE_ID",
+      "primeira_venda": "STAGE_ID",
+      "recorrencia": "STAGE_ID",
+      "recuperacao": "STAGE_ID"
+    }
+  },
+  "whatsapp": {
+    "phoneNumberId": "SEU_PHONE_NUMBER_ID",
+    "accessToken": "SEU_META_ACCESS_TOKEN",
+    "verifyToken": "TOKEN_PARA_VALIDAR_WEBHOOK_META"
+  },
+  "claude": {
+    "apiKey": "SEU_ANTHROPIC_API_KEY",
+    "model": "claude-sonnet-4-5-20250929"
+  },
+  "alertas": {
+    "giovanna": "55XXXXXXXXXXX",
+    "gerente": "55XXXXXXXXXXX"
+  },
+  "server": {
+    "port": 3001
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"console.log\\(require\\(''@anthropic-ai/sdk/package.json''\\).version\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>console.log\\(JSON.parse\\(d\\).version\\)\\)\")"
+    ]
+  }
+}
