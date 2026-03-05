@@ -1,20 +1,23 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { Suspense, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import { forceRefreshOrg } from "@/hooks/use-org"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function CadastroPage() {
+function CadastroForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const inviteToken = searchParams.get("invite")
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
@@ -22,7 +25,7 @@ export default function CadastroPage() {
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -36,7 +39,29 @@ export default function CadastroPage() {
       return
     }
 
-    router.push("/painel")
+    // Auto-create organization + profile
+    if (data.user) {
+      try {
+        await fetch("/api/auth/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: data.user.id,
+            fullName: name,
+            email,
+          }),
+        })
+      } catch {
+        // Non-blocking
+      }
+      forceRefreshOrg()
+    }
+
+    if (inviteToken) {
+      router.push(`/convite/${inviteToken}`)
+    } else {
+      router.push("/painel")
+    }
     router.refresh()
   }
 
@@ -44,6 +69,11 @@ export default function CadastroPage() {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Criar Conta</CardTitle>
+        {inviteToken && (
+          <p className="text-sm text-muted-foreground">
+            Crie sua conta para aceitar o convite
+          </p>
+        )}
       </CardHeader>
       <form onSubmit={handleSignup}>
         <CardContent className="space-y-4">
@@ -99,12 +129,23 @@ export default function CadastroPage() {
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             Ja tem conta?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link
+              href={inviteToken ? `/login?invite=${inviteToken}` : "/login"}
+              className="text-primary hover:underline"
+            >
               Entrar
             </Link>
           </p>
         </CardFooter>
       </form>
     </Card>
+  )
+}
+
+export default function CadastroPage() {
+  return (
+    <Suspense>
+      <CadastroForm />
+    </Suspense>
   )
 }
