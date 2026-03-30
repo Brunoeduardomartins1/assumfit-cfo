@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Kanban, MessageSquare, Users, Send,
   CheckSquare, Bot, Settings, Bell,
 } from 'lucide-react'
-import { PeriodProvider, usePeriod } from '@/lib/dashboard-period-context'
+import { usePeriod } from '@/lib/dashboard-period-context'
 import PeriodFilter from '@/components/dashboard/period-filter'
 
 const NAV_MAIN = [
@@ -196,9 +196,5 @@ function Shell({ children }: { children: React.ReactNode }) {
 }
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  return (
-    <PeriodProvider>
-      <Shell>{children}</Shell>
-    </PeriodProvider>
-  )
+  return <Shell>{children}</Shell>
 }
