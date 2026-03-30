@@ -632,4 +632,3 @@ export default function DashboardPage() {
     </PeriodProvider>
   )
 }
-}
