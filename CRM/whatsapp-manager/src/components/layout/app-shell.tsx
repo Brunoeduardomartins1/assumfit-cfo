@@ -5,8 +5,6 @@ import {
   LayoutDashboard, Kanban, MessageSquare, Users, Send,
   CheckSquare, Bot, Settings, Bell,
 } from 'lucide-react'
-import { usePeriod } from '@/lib/dashboard-period-context'
-import PeriodFilter from '@/components/dashboard/period-filter'
 
 const NAV_MAIN = [
   { href: '/dashboard',     icon: LayoutDashboard, label: 'Dashboard'      },
@@ -36,8 +34,6 @@ const MODULE_TITLES: Record<string, string> = {
 function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isConversas = pathname.startsWith('/conversas')
-  const isDashboard = pathname.startsWith('/dashboard')
-  const { period, setPeriod } = usePeriod()
 
   const title = Object.entries(MODULE_TITLES).find(([k]) => pathname.startsWith(k))?.[1] ?? 'MUVX CRM'
 
@@ -173,9 +169,6 @@ function Shell({ children }: { children: React.ReactNode }) {
               {title}
             </span>
             <div className="flex items-center gap-2">
-              {isDashboard ? (
-                <PeriodFilter period={period} onChange={setPeriod} />
-              ) : null}
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{ background: '#080D2F', color: '#fff' }}

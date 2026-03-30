@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react'
 import { AlertTriangle, Users, MessageSquare, TrendingUp, UserCheck, UserX, PhoneCall,
   DollarSign, Activity, ShoppingCart, RefreshCw } from 'lucide-react'
-import { usePeriod, periodToQuery, periodLabel } from '@/lib/dashboard-period-context'
+import { PeriodProvider, usePeriod, periodToQuery, periodLabel } from '@/lib/dashboard-period-context'
+import PeriodFilter from '@/components/dashboard/period-filter'
 
 interface DashboardData {
   total_contacts: number
@@ -106,8 +107,8 @@ const STATUS_LABELS: Record<string, string> = {
   OVERDUE: 'Em atraso',
 }
 
-export default function DashboardPage() {
-  const { period } = usePeriod()
+function DashboardInner() {
+  const { period, setPeriod } = usePeriod()
   const [data, setData] = useState<DashboardData | null>(null)
   const [muvx, setMuvx] = useState<MuvxData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -275,10 +276,13 @@ export default function DashboardPage() {
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <button onClick={() => { load(); loadMuvx(period) }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
-          style={{ background: '#F0F2F5', color: '#8B8FA8' }}>
-          <RefreshCw size={12} /> Atualizar
-        </button>
+        <div className="flex items-center gap-3">
+          <PeriodFilter period={period} onChange={setPeriod} />
+          <button onClick={() => { load(); loadMuvx(period) }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
+            style={{ background: '#F0F2F5', color: '#8B8FA8' }}>
+            <RefreshCw size={12} /> Atualizar
+          </button>
+        </div>
       </div>
 
       {loading && (
@@ -619,4 +623,13 @@ export default function DashboardPage() {
       )}
     </div>
   )
+}
+
+export default function DashboardPage() {
+  return (
+    <PeriodProvider>
+      <DashboardInner />
+    </PeriodProvider>
+  )
+}
 }
