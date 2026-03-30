@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { AlertTriangle, Users, MessageSquare, TrendingUp, UserCheck, UserX, PhoneCall,
   DollarSign, Activity, ShoppingCart, RefreshCw } from 'lucide-react'
 import { usePeriod, periodToQuery, periodLabel } from '@/lib/dashboard-period-context'
@@ -114,17 +114,17 @@ export default function DashboardPage() {
   const [muvxLoading, setMuvxLoading] = useState(true)
   const [muvxError, setMuvxError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  async function load() {
     const res = await fetch('/api/metrics/dashboard')
     if (res.ok) setData(await res.json())
     setLoading(false)
-  }, [])
+  }
 
-  const loadMuvx = useCallback(async () => {
+  async function loadMuvx(p = period) {
     setMuvxLoading(true)
     setMuvxError(null)
     try {
-      const res = await fetch(`/api/muvx/metrics?${periodToQuery(period)}`)
+      const res = await fetch(`/api/muvx/metrics?${periodToQuery(p)}`)
       if (res.ok) {
         setMuvx(await res.json())
       } else {
@@ -136,17 +136,19 @@ export default function DashboardPage() {
     } finally {
       setMuvxLoading(false)
     }
-  }, [period])
+  }
 
   useEffect(() => {
     load()
     const iv = setInterval(load, 30000)
     return () => clearInterval(iv)
-  }, [load])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
-    loadMuvx()
-  }, [loadMuvx])
+    loadMuvx(period)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period.days, period.from, period.to])
 
   const d = data
 
@@ -273,7 +275,7 @@ export default function DashboardPage() {
             {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <button onClick={() => { load(); loadMuvx() }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
+        <button onClick={() => { load(); loadMuvx(period) }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
           style={{ background: '#F0F2F5', color: '#8B8FA8' }}>
           <RefreshCw size={12} /> Atualizar
         </button>
